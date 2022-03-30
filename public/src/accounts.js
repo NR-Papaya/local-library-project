@@ -11,7 +11,7 @@ function sortAccountsByLastName(accounts) {
       : 1
   );
 }
-//returns count of the matching account id in the books borrows array
+
 function getTotalNumberOfBorrows(account, books) {
   let count = 0;
   for (let book in books) {

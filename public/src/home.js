@@ -16,8 +16,7 @@ function getBooksBorrowedCount(books) {
   }, []).length;
 }
 
-// returns an array of 5 or fewer objects that represents the most common occuring genres
-//ordered from most common to least.
+
 function getMostCommonGenres(books) {
   const genreArray = books.reduce((genres, book) => {
     genres.push(book.genre);
@@ -35,19 +34,48 @@ function getMostCommonGenres(books) {
   }, {});
 
   const genreObjectsArray = [];
-  for (let entry in genreCounter) {
-    const genreIDCount = genreCounter[entry];
-    const [key, value] = genreIDCount;
+  for (const [key, value] of Object.entries(genreCounter)) {
     genreObjectsArray.push({ name: key, count: value });
-    console.log(key, value);
   }
-  console.log(genreObjectsArray);
+  return genreObjectsArray
+    .sort((genreA, genreB) => genreB.count - genreA.count)
+    .slice(0, 5);
 }
 
-function getMostPopularBooks(books) {}
+function getMostPopularBooks(books) {
+  return books
+    .reduce((booksObjArray, book) => {
+      booksObjArray.push({ name: book.title, count: book.borrows.length });
+      return booksObjArray;
+    }, [])
+    .sort((bookObjA, bookObjB) => bookObjB.count - bookObjA.count)
+    .slice(0, 5);
+}
 
-function getMostPopularAuthors(books, authors) {}
+function _getBorrowCountPerAuthor(books, author) {
+  const filteredBooksBorCount = books.map((book) => {
+    if (book.authorId === author.id) {
+      return book.borrows.length;
+    } else {
+      return 0;
+    }
+  });
+  return filteredBooksBorCount.reduce((total, book) => {
+    return total + book;
+  }, 0);
+}
 
+function getMostPopularAuthors(books, authors) {
+  return authors
+    .map((author) => {
+      return {
+        name: `${author.name.first} ${author.name.last}`,
+        count: _getBorrowCountPerAuthor(books, author),
+      };
+    })
+    .sort((authorA, authorB) => (authorB.count > authorA.count ? 1 : -1))
+    .slice(0, 5);
+}
 module.exports = {
   getTotalBooksCount,
   getTotalAccountsCount,

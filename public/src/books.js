@@ -7,45 +7,29 @@ function findBookById(books, id) {
 }
 
 function partitionBooksByBorrowedStatus(books) {
-  return books.reduce(
-    (partArray, book) => {
-      const { borrows } = book;
-      if (borrows[0].returned) {
-        partArray[1].push(book);
-        return partArray;
-      } else {
-        partArray[0].push(book);
-        return partArray;
-      }
-    },
-    [[], []]
-  );
+  const returnedBooks = books.filter(({ borrows }) => borrows[0].returned);
+  const notReturnedBooks = books.filter(({ borrows }) => !borrows[0].returned);
+  return [notReturnedBooks, returnedBooks];
 }
-
+//helper function
+function _findAccountById(accounts, id) {
+  return accounts.find((account) => account.id === id);
+}
+//---
 function getBorrowersForBook(book, accounts) {
-  let returnableAccounts = [];
+  const { borrows } = book;
 
-  const matchingAcctList = accounts.reduce((matchingAccounts, account) => {
-    if (book.borrows.some(({ id }) => id == account.id)) {
-      matchingAccounts.push(account);
+  const updatedBorrowsList = borrows.map((borrower) => {
+    const currentAccount = _findAccountById(accounts, borrower.id);
+    if (currentAccount) {
+      borrower = { ...borrower, ...currentAccount };
+      return borrower;
+    } else {
+      return;
     }
-    return matchingAccounts;
-  }, []);
+  });
 
-  for (let account of matchingAcctList) {
-    const matchingAccount = account;
-    // console.log(matchingAccount);
-    const { id } = matchingAccount;
-
-    const { returned } = idSet;
-
-    if (id === idSet.id) {
-      idSet = {
-        ...matchingAccount,
-        returned,
-      };
-    }
-  }
+  return updatedBorrowsList.slice(0, 10);
 }
 
 // function getBorrowersForBook(book, accounts) {
