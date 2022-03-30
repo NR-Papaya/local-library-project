@@ -32,22 +32,6 @@ function getBorrowersForBook(book, accounts) {
   return updatedBorrowsList.slice(0, 10);
 }
 
-// function getBorrowersForBook(book, accounts) {
-//   const borrowerAccounts = accounts.reduce((borrowerList, account) => {
-//     borrowerList[account.id] = account;
-//     return borrowerList;
-//   }, {});
-
-//   console.log(
-//     book.borrows
-//       .map(({ id, returned }) => ({
-//         ...foo[id],
-//         returned,
-//       }))
-//       .slice(0, 10)
-//   );
-// }
-
 module.exports = {
   findAuthorById,
   findBookById,
